@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Dhikr Ad Muter icon">
+  <defs>
+    <linearGradient id="bg" x1="18" y1="14" x2="110" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f9d58"/>
+      <stop offset="1" stop-color="#0b5f3a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#063b24" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <rect x="10" y="10" width="108" height="108" rx="34" fill="url(#bg)" filter="url(#shadow)"/>
+  <path d="M76.5 33.5C61.2 37.6 49.9 51.5 49.9 68c0 16.5 11.3 30.4 26.6 34.5C53.8 105.1 34 87.4 34 64s19.8-41.1 42.5-30.5Z" fill="#fff8dc"/>
+  <path d="M85.6 42.8 91.2 55l13.3 1.6-9.8 9.1 2.6 13.1-11.7-6.5-11.7 6.5 2.6-13.1-9.8-9.1L80 55l5.6-12.2Z" fill="#d4af37"/>
+</svg>

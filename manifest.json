@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Dhikr Ad Muter & Skipper",
+  "version": "1.0.0",
+  "description": "Instantly mutes and skips YouTube ads, with an optional Dhikr overlay while ads are active.",
+  "permissions": ["storage", "activeTab"],
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["page-skipper.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_title": "YouTube Dhikr Ad Muter",
+    "default_popup": "popup.html",
+    "default_icon": "icon.svg"
+  },
+  "icons": {
+    "16": "icon.svg",
+    "32": "icon.svg",
+    "48": "icon.svg",
+    "128": "icon.svg"
+  }
+}

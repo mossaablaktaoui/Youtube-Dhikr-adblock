@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>YouTube Dhikr Ad Muter</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main class="app">
+    <section class="top-options" aria-label="Popup preferences">
+      <label class="language-select-wrap" for="languageSelect">
+        <span id="languageLabel">Language</span>
+        <select id="languageSelect">
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+          <option value="es">Español</option>
+          <option value="tr">Türkçe</option>
+          <option value="id">Indonesia</option>
+        </select>
+      </label>
+      <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode">🌙</button>
+    </section>
+
+    <header class="hero">
+      <div class="logo" aria-hidden="true">☪</div>
+      <div>
+        <h1 id="appTitle">Dhikr Ad Muter</h1>
+        <p id="appSubtitle">Mute, skip, and cover YouTube ads with Arabic Dhikr.</p>
+      </div>
+    </header>
+
+    <section class="card controls" aria-label="Ad controls">
+      <label class="setting-row" for="muteAds">
+        <span>
+          <strong id="muteTitle">Mute Ads</strong>
+          <small id="muteDesc">Silence ad video immediately.</small>
+        </span>
+        <input class="switch-input" id="muteAds" type="checkbox">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting-row" for="autoSkip">
+        <span>
+          <strong id="skipTitle">Auto-Skip</strong>
+          <small id="skipDesc">Click skip buttons as soon as they appear.</small>
+        </span>
+        <input class="switch-input" id="autoSkip" type="checkbox">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting-row" for="hideAds">
+        <span>
+          <strong id="hideTitle">Hide Ads Overlay</strong>
+          <small id="hideDesc">Show black screen with Dhikr during ads.</small>
+        </span>
+        <input class="switch-input" id="hideAds" type="checkbox">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+
+      <label class="setting-row" for="hideSidebarAds">
+        <span>
+          <strong id="hideSidebarTitle">Hide All Ads</strong>
+          <small id="hideSidebarDesc">Remove ads from sidebar, homepage, and everywhere else.</small>
+        </span>
+        <input class="switch-input" id="hideSidebarAds" type="checkbox">
+        <span class="switch" aria-hidden="true"></span>
+      </label>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h2 id="dhikrListTitle">Dhikr List</h2>
+      </div>
+
+      <form id="addForm" class="add-form">
+        <input id="customDhikr" type="text" maxlength="120" placeholder="أضف ذكرًا مخصصًا" autocomplete="off" dir="auto">
+        <button id="addButton" type="submit">Add</button>
+      </form>
+
+      <div class="list-header">
+        <span id="overlayDhikrLabel">Overlay Dhikr</span>
+        <span id="countBadge" class="badge">0</span>
+      </div>
+      <ul id="dhikrList" class="dhikr-list"></ul>
+      <p id="emptyState" class="empty-state">No Dhikr selected. Ads will show a plain black overlay.</p>
+    </section>
+
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+  </main>
+
+  <script src="popup.js"></script>
+</body>
+</html>
