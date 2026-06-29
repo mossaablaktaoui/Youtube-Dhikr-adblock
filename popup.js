@@ -205,18 +205,23 @@
     applyLanguage();
     renderDhikrList();
     document.querySelectorAll('.hero, .card, .status').forEach(el => el.style.display = enabled ? '' : 'none');
+    document.body.classList.toggle('shrunk', !enabled);
     elements.powerToggle.classList.toggle('disabled', !enabled);
-    elements.powerToggle.textContent = enabled ? '⏻' : '⏻';
     elements.powerToggle.title = enabled ? t('disable') : t('enable');
-    document.getElementById('disabledOverlay').style.display = enabled ? 'none' : '';
-    document.getElementById('enableButton').textContent = t('enable');
+    elements.languageSelect.disabled = !enabled;
+    elements.themeToggle.disabled = !enabled;
   }
 
   function bindEvents() {
-    elements.languageSelect.addEventListener('change', event => save({ language: event.target.value }, 'saved'));
-    elements.themeToggle.addEventListener('click', () => save({ theme: state.theme === 'dark' ? 'light' : 'dark' }, 'saved'));
+    elements.languageSelect.addEventListener('change', event => {
+      if (state.enabled === false) return;
+      save({ language: event.target.value }, 'saved');
+    });
+    elements.themeToggle.addEventListener('click', () => {
+      if (state.enabled === false) return;
+      save({ theme: state.theme === 'dark' ? 'light' : 'dark' }, 'saved');
+    });
     elements.powerToggle.addEventListener('click', () => save({ enabled: !state.enabled }));
-    document.getElementById('enableButton').addEventListener('click', () => save({ enabled: true }));
     ['muteAds', 'autoSkip', 'hideAds', 'hideSidebarAds'].forEach(key => elements[key].addEventListener('change', event => save({ [key]: event.target.checked })));
     elements.addForm.addEventListener('submit', event => {
       event.preventDefault();
