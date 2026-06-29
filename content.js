@@ -130,7 +130,7 @@
   }
 
   function ensureOverlay() {
-    if (!settings.hideAds) return removeOverlay();
+    if (!settings.enabled || !settings.hideAds) return removeOverlay();
 
     const player = getMoviePlayer();
     if (!player) return;
@@ -157,7 +157,7 @@
           width: 100% !important;
           height: 100% !important;
           z-index: 2147483646 !important;
-    	  background: radial-gradient(circle at center, #101010 0%, #000 70%) !important;
+		  background: transparent !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
@@ -254,17 +254,7 @@
     '#player-ads',
     '.ytd-ad-slot-renderer',
     'ytd-player-legacy-desktop-watch-ads-renderer',
-    'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"]',
-    'ytp-ad-overlay-container',
-    '.ytp-ad-overlay-container',
-    '.ytp-ad-text-overlay',
-    '.ytp-ad-overlay-slot',
-    '.ytp-ad-overlay-image',
-    '.ytp-ad-overlay-close-button',
-    '.video-ads.ytp-ad-module',
-    '.ytp-suggested-action',
-    '.ytp-featured-product',
-    'tp-yt-paper-dialog:has(ytd-enforcement-message-view-model)'
+    'ytd-engagement-panel-section-list-renderer[target-id="engagement-panel-ads"]'
   ];
   const AD_HIDE_CSS = AD_SELECTORS.map(s => `${s} { display: none !important; }`).join('\n');
   let adHideStyle = null;
@@ -292,11 +282,23 @@
     }
   }
 
+  let lastSkipAttr = '';
+  let lastEnabledAttr = '';
+
   function notifyPageSkipper() {
     const skipEnabled = Boolean(settings.enabled && settings.autoSkip);
     const masterEnabled = Boolean(settings.enabled);
-    document.documentElement.setAttribute('data-yt-dhikr-autoskip', skipEnabled ? '1' : '0');
-    document.documentElement.setAttribute('data-yt-dhikr-enabled', masterEnabled ? '1' : '0');
+    const skipStr = skipEnabled ? '1' : '0';
+    const enabledStr = masterEnabled ? '1' : '0';
+
+    if (skipStr !== lastSkipAttr) {
+      document.documentElement.setAttribute('data-yt-dhikr-autoskip', skipStr);
+      lastSkipAttr = skipStr;
+    }
+    if (enabledStr !== lastEnabledAttr) {
+      document.documentElement.setAttribute('data-yt-dhikr-enabled', enabledStr);
+      lastEnabledAttr = enabledStr;
+    }
     window.dispatchEvent(new CustomEvent('ytDhikrAdblockSettings', {
       detail: { autoSkip: skipEnabled, enabled: masterEnabled }
     }));

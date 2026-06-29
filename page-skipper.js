@@ -112,29 +112,10 @@
     return style.display !== 'none' && style.visibility !== 'hidden' && style.opacity !== '0';
   }
 
-  function textOf(element) {
-    return `${element.getAttribute('aria-label') || ''} ${element.getAttribute('title') || ''} ${element.textContent || ''}`.trim();
-  }
-
-  function looksReadyToSkip(element) {
-    const text = textOf(element).toLowerCase();
-    const meta = `${getClassName(element)} ${element.id || ''}`.toLowerCase();
-    const looksLikeSkip = /skip|تخط|تخطي|تخطّى|تخطّي|تجاوز|ignorar|saltar|passer|überspringen|salta|pular|omitir/.test(`${text} ${meta}`) ||
-      /ytp.*skip|skip.*ad|ad.*skip/.test(meta);
-    // Still check for countdown but also accept the button if it's not disabled
-    const countdown = /skip in|available in|you can skip|ثوان|ثانية|بعد|خلال/.test(text);
-    const notDisabled = !element.disabled && element.getAttribute('aria-disabled') !== 'true';
-    return looksLikeSkip && (!countdown || notDisabled);
-  }
-
-  function isAdActive() {
+  function isPlayerShowingAd() {
     const player = getPlayer();
     if (!player) return false;
-    if (player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting')) return true;
-    return AD_SIGNAL_SELECTORS.some(selector => {
-      const element = player.querySelector(selector) || document.querySelector(selector);
-      return element && isVisible(element);
-    });
+    return player.classList.contains('ad-showing') || player.classList.contains('ad-interrupting');
   }
 
   function querySkipButtons() {
@@ -148,20 +129,11 @@
       document.querySelectorAll(selector).forEach(element => found.add(element));
     }
 
-    const player = getPlayer();
-    const roots = [player, document].filter(Boolean);
-    for (const root of roots) {
-      root.querySelectorAll('button, [role="button"], .ytp-button, [aria-label], [title]').forEach(element => {
-        if (looksReadyToSkip(element)) found.add(element);
-      });
-    }
-
     return Array.from(found).filter(element => (
       element &&
       isVisible(element) &&
       !element.disabled &&
-      element.getAttribute('aria-disabled') !== 'true' &&
-      looksReadyToSkip(element)
+      element.getAttribute('aria-disabled') !== 'true'
     ));
   }
 
@@ -173,9 +145,7 @@
 
   function clickElement(element) {
     if (!element) return;
-
     dispatchLegacyClick(element);
-
     if (typeof element.click === 'function') {
       element.click();
     }
@@ -195,7 +165,9 @@
   }
 
   function closeOverlayAds() {
-    Array.from(document.getElementsByClassName('ytp-ad-overlay-close-button')).forEach(clickElement);
+    const player = getPlayer();
+    if (!player) return;
+    Array.from(player.getElementsByClassName('ytp-ad-overlay-close-button')).forEach(clickElement);
   }
 
   function syncEnabledFromDom() {
@@ -210,6 +182,7 @@
   function tick() {
     syncEnabledFromDom();
     if (!masterEnabled || !enabled) return;
+    if (!isPlayerShowingAd()) return;
 
     closeOverlayAds();
 
@@ -221,7 +194,7 @@
 
   const loop = () => {
     try { tick(); } catch (_) {}
-    setTimeout(loop, 100);
+    setTimeout(loop, 300);
   };
 
   if (document.readyState === 'loading') {
