@@ -44,14 +44,17 @@
   ];
 
   let enabled = true;
-  let adWasActive = false;
-  let skipAt = 0;
+  let masterEnabled = true;
   let lastClickAt = 0;
 
   window.addEventListener('ytDhikrAdblockSettings', event => {
-    if (event && event.detail && typeof event.detail.autoSkip === 'boolean') {
-      enabled = event.detail.autoSkip;
-      if (!enabled) resetSchedule();
+    if (event && event.detail) {
+      if (typeof event.detail.autoSkip === 'boolean') {
+        enabled = event.detail.autoSkip;
+      }
+      if (typeof event.detail.enabled === 'boolean') {
+        masterEnabled = event.detail.enabled;
+      }
     }
   });
 
@@ -118,8 +121,10 @@
     const meta = `${getClassName(element)} ${element.id || ''}`.toLowerCase();
     const looksLikeSkip = /skip|تخط|تخطي|تخطّى|تخطّي|تجاوز|ignorar|saltar|passer|überspringen|salta|pular|omitir/.test(`${text} ${meta}`) ||
       /ytp.*skip|skip.*ad|ad.*skip/.test(meta);
+    // Still check for countdown but also accept the button if it's not disabled
     const countdown = /skip in|available in|you can skip|ثوان|ثانية|بعد|خلال/.test(text);
-    return looksLikeSkip && !countdown;
+    const notDisabled = !element.disabled && element.getAttribute('aria-disabled') !== 'true';
+    return looksLikeSkip && (!countdown || notDisabled);
   }
 
   function isAdActive() {
@@ -130,28 +135,6 @@
       const element = player.querySelector(selector) || document.querySelector(selector);
       return element && isVisible(element);
     });
-  }
-
-  function resetSchedule() {
-    adWasActive = false;
-    skipAt = 0;
-    lastClickAt = 0;
-  }
-
-  function updateSchedule(adActive) {
-    if (adActive && !adWasActive) {
-      // The working extension waits about 5 seconds, which matches YouTube's
-      // normal skippable-ad countdown. We still click earlier if the button is
-      // visibly ready.
-      skipAt = Date.now() + 5200;
-    }
-
-    if (!adActive && adWasActive) {
-      resetSchedule();
-      return;
-    }
-
-    adWasActive = adActive;
   }
 
   function querySkipButtons() {
@@ -216,32 +199,29 @@
   }
 
   function syncEnabledFromDom() {
-    const value = document.documentElement.getAttribute('data-yt-dhikr-autoskip');
-    if (value === '1') enabled = true;
-    if (value === '0') enabled = false;
+    const skipVal = document.documentElement.getAttribute('data-yt-dhikr-autoskip');
+    if (skipVal === '1') enabled = true;
+    if (skipVal === '0') enabled = false;
+    const masterVal = document.documentElement.getAttribute('data-yt-dhikr-enabled');
+    if (masterVal === '1') masterEnabled = true;
+    if (masterVal === '0') masterEnabled = false;
   }
 
   function tick() {
     syncEnabledFromDom();
-    if (!enabled) return;
+    if (!masterEnabled || !enabled) return;
 
-    const adActive = isAdActive();
-    updateSchedule(adActive);
     closeOverlayAds();
 
-    if (!adActive) return;
-
     const buttons = querySkipButtons();
-    const skipTimeReached = skipAt > 0 && Date.now() >= skipAt;
-
-    if (buttons.length && (skipTimeReached || buttons.some(looksReadyToSkip))) {
+    if (buttons.length) {
       clickSkipButtons(buttons);
     }
   }
 
   const loop = () => {
     try { tick(); } catch (_) {}
-    setTimeout(loop, 200);
+    setTimeout(loop, 100);
   };
 
   if (document.readyState === 'loading') {

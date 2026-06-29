@@ -15,6 +15,7 @@
   const OLD_ARABIC_DEFAULT_DHIKR = ['سبحان الله', 'الحمد لله', 'الله أكبر', 'أستغفر الله', 'لا إله إلا الله'];
   const OLD_ENGLISH_DEFAULT_DHIKR = ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'Astaghfirullah', 'La ilaha illa Allah'];
   const DEFAULT_SETTINGS = {
+    enabled: true,
     muteAds: true,
     autoSkip: true,
     hideAds: true,
@@ -156,7 +157,7 @@
           width: 100% !important;
           height: 100% !important;
           z-index: 2147483646 !important;
-          background: radial-gradient(circle at center, #101010 0%, #000 70%) !important;
+    	  background: radial-gradient(circle at center, #101010 0%, #000 70%) !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
@@ -269,7 +270,7 @@
   let adHideStyle = null;
 
   function ensureAdHideStyle() {
-    if (!settings.hideSidebarAds) {
+    if (!settings.enabled || !settings.hideSidebarAds) {
       if (adHideStyle) { adHideStyle.remove(); adHideStyle = null; }
       return;
     }
@@ -292,15 +293,26 @@
   }
 
   function notifyPageSkipper() {
-    const enabled = Boolean(settings.autoSkip);
-    document.documentElement.setAttribute('data-yt-dhikr-autoskip', enabled ? '1' : '0');
+    const skipEnabled = Boolean(settings.enabled && settings.autoSkip);
+    const masterEnabled = Boolean(settings.enabled);
+    document.documentElement.setAttribute('data-yt-dhikr-autoskip', skipEnabled ? '1' : '0');
+    document.documentElement.setAttribute('data-yt-dhikr-enabled', masterEnabled ? '1' : '0');
     window.dispatchEvent(new CustomEvent('ytDhikrAdblockSettings', {
-      detail: { autoSkip: enabled }
+      detail: { autoSkip: skipEnabled, enabled: masterEnabled }
     }));
   }
 
   function handleAdState() {
     if (!isYouTubePage()) return;
+    if (!settings.enabled) {
+      if (adActive) {
+        adActive = false;
+        restoreAudio();
+        removeOverlay();
+      }
+      notifyPageSkipper();
+      return;
+    }
     notifyPageSkipper();
 
     const nowAdActive = detectAd();
@@ -340,9 +352,9 @@
       for (const [key, change] of Object.entries(changes)) {
         settings[key] = change.newValue;
       }
-      if (!settings.hideAds) removeOverlay();
-      if (!settings.muteAds) restoreAudio();
-      if ('hideSidebarAds' in changes) applyAdHiding();
+      if (!settings.enabled || !settings.hideAds) removeOverlay();
+      if (!settings.enabled || !settings.muteAds) restoreAudio();
+      if ('hideSidebarAds' in changes || 'enabled' in changes) applyAdHiding();
       notifyPageSkipper();
       handleAdState();
     });

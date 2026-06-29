@@ -10,9 +10,10 @@ A Chrome/Edge extension that mutes, skips, and covers YouTube ads with an Islami
 
 ### Features
 
+- **Master Toggle** — enable/disable the entire extension from the popup; all content hides when disabled.
 - **Mute Ads** — automatically mutes ad audio when an ad starts.
-- **Auto-Skip** — clicks the skip button as soon as it's available.
-- **Hide Ads Overlay** — covers the video player with a black screen displaying a random Dhikr during ads.
+- **Auto-Skip** — clicks the skip button the moment it appears.
+- **Hide Ads Overlay** — covers the video player with a transparent background displaying a random Dhikr during ads.
 - **Hide All Ads** — removes ad elements from the sidebar, homepage, search results, and everywhere else on YouTube (without hiding suggested videos).
 - **Customizable Dhikr List** — add, edit, or delete Dhikr phrases displayed on the overlay.
 - **Multi-language Support** — Arabic, English, French, Spanish, Turkish, Indonesian.
@@ -33,9 +34,10 @@ A Chrome/Edge extension that mutes, skips, and covers YouTube ads with an Islami
 
 ### المميزات
 
+- **تشغيل / إيقاف الإضافة** — فعّل أو عطّل الإضافة بالكامل من النافذة المنبثقة؛ كل المحتوى يختفي عند التعطيل.
 - **كتم الإعلانات** — يكتم صوت الإعلان تلقائيًا عند بدايته.
 - **التخطي التلقائي** — يضغط على زر التخطي فور ظهوره.
-- **تغطية الإعلانات** — يغطي شاشة الفيديو بشاشة سوداء تعرض ذكرًا عشوائيًا أثناء الإعلان.
+- **تغطية الإعلانات** — يغطي شاشة الفيديو بخلفية شفافة تعرض ذكرًا عشوائيًا أثناء الإعلان.
 - **إخفاء كل الإعلانات** — يزيل الإعلانات من الشريط الجانبي والصفحة الرئيسية ونتائج البحث وكل مكان (دون إخفاء الفيديوهات المقترحة).
 - **قائمة أذكار مخصصة** — أضف أو عدّل أو احذف الأذكار التي تظهر على الشاشة.
 - **دعم لغات متعددة** — العربية، الإنجليزية، الفرنسية، الإسبانية، التركية، الإندونيسية.
