@@ -89,7 +89,7 @@
   function rememberAndMute(video) {
     if (!video) return;
 
-    if (lastVideo !== video || !previousVideoState) {
+    if (!previousVideoState) {
       lastVideo = video;
       previousVideoState = {
         muted: video.muted,
@@ -103,7 +103,7 @@
   }
 
   function restoreAudio() {
-    const video = lastVideo || getVideo();
+    const video = getVideo() || lastVideo;
     if (!video || !previousVideoState) return;
 
     video.muted = previousVideoState.muted;
@@ -157,7 +157,7 @@
           width: 100% !important;
           height: 100% !important;
           z-index: 2147483646 !important;
-		  background: transparent !important;
+		  background: #000 !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
